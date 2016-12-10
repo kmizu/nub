@@ -27,7 +27,7 @@ printExpression returns[AstNode.PrintExpression e]
     ;
 
 expression returns [AstNode.Expression e]
-    : v=conditional {$e = $v.e;}
+    : v=logical {$e = $v.e;}
     ;
     
 logical returns [AstNode.Expression e]

@@ -1,7 +1,7 @@
 grammar Nub;
 
 program returns [AstNode.Expression e]
-   : v=toplevels[new java.util.ArrayList<AstNode.Expression>()] {$e = new AstNode.ExpressionList($v.e); }
+   : v=toplevels[new java.util.ArrayList<AstNode.Expression>()] EOF {$e = new AstNode.ExpressionList($v.e); }
    ;
 
 block returns [List<AstNode.Expression> e]

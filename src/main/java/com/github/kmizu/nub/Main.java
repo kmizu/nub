@@ -31,7 +31,7 @@ public class Main {
                 case "==":
                     return (node.lhs().accept(this) == node.rhs().accept(this)) ? 1 : 0;
                 case "!=":
-                    return (node.lhs().accept(this) == node.rhs().accept(this)) ? 1 : 0;
+                    return (node.lhs().accept(this) != node.rhs().accept(this)) ? 1 : 0;
                 default:
                     throw new RuntimeException("cannot reach here");
             }

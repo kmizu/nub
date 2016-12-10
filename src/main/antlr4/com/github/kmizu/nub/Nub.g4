@@ -155,4 +155,7 @@ SEMICOLON
 
 fragment INT :   '0' | [1-9] [0-9]* ; // no leading zeros
 
+LINE_COMMENT : ('//' (~[\r\n])* (EOF | '\r\n' | '\n' | '\r')) -> skip;
+
 WS  :   [ \t\n\r]+ -> skip ;
+

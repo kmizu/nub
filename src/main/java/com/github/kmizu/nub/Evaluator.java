@@ -66,6 +66,13 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     @Override
     public Integer visitPrintExpression(AstNode.PrintExpression node) {
         Integer value = node.target().accept(this);
+        System.out.print(value);
+        return value;
+    }
+
+    @Override
+    public Integer visitPrintlnExpression(AstNode.PrintlnExpression node) {
+        Integer value = node.target().accept(this);
         System.out.println(value);
         return value;
     }

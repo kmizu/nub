@@ -16,6 +16,7 @@ toplevel returns [AstNode.Expression e]
    : w=letExpression {$e = $w.e;}
    | v=lineExpression {$e = $v.e;}
    | x=printExpression {$e = $x.e;}
+   | a=printlnExpression {$e = $a.e;}
    | y=ifExpression {$e = $y.e;}
    | z=whileExpression {$e = $z.e;}
    ;
@@ -39,6 +40,10 @@ letExpression returns [AstNode.LetExpression e]
 
 printExpression returns[AstNode.PrintExpression e]
     : PRINT LP v=expression RP SEMICOLON {$e = new AstNode.PrintExpression($v.e);}
+    ;
+
+printlnExpression returns[AstNode.PrintlnExpression e]
+    : PRINTLN LP v=expression RP SEMICOLON {$e = new AstNode.PrintlnExpression($v.e);}
     ;
 
 expression returns [AstNode.Expression e]
@@ -91,6 +96,10 @@ identifier returns [AstNode.Identifier e]
 fragment ESC :   '\\' (["\\/bfnrt] | UNICODE) ;
 fragment UNICODE : 'u' HEX HEX HEX HEX ;
 fragment HEX : [0-9a-fA-F] ;
+
+PRINTLN
+    : 'println'
+    ;
 
 PRINT
     : 'print'

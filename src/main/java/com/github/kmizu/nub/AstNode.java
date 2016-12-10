@@ -13,6 +13,7 @@ public class AstNode {
         E visitIfExpression(IfExpression node);
         E visitWhileExpression(WhileExpression node);
         E visitAssignmentOperation(AssignmentOperation node);
+        E visitPrintlnExpression(PrintlnExpression node);
     }
 
     public static abstract class Expression extends AstNode {
@@ -118,6 +119,19 @@ public class AstNode {
         public <E> E accept(ExpressionVisitor<E> visitor) {
             return visitor.visitPrintExpression(this);
         }
+    }
+
+    public static class PrintlnExpression extends Expression {
+        private final AstNode.Expression target;
+        public PrintlnExpression(AstNode.Expression target) {
+            this.target = target;
+        }
+        public AstNode.Expression target() {
+            return target;
+        }
+
+        @Override
+        public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitPrintlnExpression(this); }
     }
 
     public static class ExpressionList extends Expression {

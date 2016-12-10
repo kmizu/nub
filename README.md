@@ -30,17 +30,20 @@ Maven 3 is required to compile nub.  ANTLR4 is not required since Maven provides
 (1 + 2) * 3 / 4
 ```
 
-## Variable Assignment & Reference
+## Variable Declaration & Assignment & Reference
 
 Note that semicolon is required at the end of line
 
 ```java
 let x = 1;
 let y = 2;
-x + y; 
+print(x + y); //3
+x = 2;
+print(x + y); //4
+// let x = 1; is not allowed since x is already defined
 ```
 
-## Comparison
+## Comparison Expression
 
 ```java
 1 < 2

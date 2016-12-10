@@ -10,6 +10,7 @@ public class AstNode {
         E visitIdentifier(Identifier node);
         E visitPrintExpression(PrintExpression node);
         E visitExpressionList(ExpressionList node);
+        E visitIfExpression(IfExpression node);
     }
 
     public static abstract class Expression extends AstNode {
@@ -31,6 +32,36 @@ public class AstNode {
         }
 
         public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitLetExpression(this); }
+    }
+
+    public static class IfExpression extends Expression {
+        private final AstNode.Expression condition;
+        private final List<AstNode.Expression> thenClause, elseClause;
+        public IfExpression(
+            AstNode.Expression condition,
+            List<AstNode.Expression> thenClause,
+            List<AstNode.Expression> elseClause) {
+            this.condition = condition;
+            this.thenClause = thenClause;
+            this.elseClause = elseClause;
+        }
+
+        public AstNode.Expression condition() {
+            return condition;
+        }
+
+        public List<AstNode.Expression> thenClause() {
+            return thenClause;
+        }
+
+        public List<AstNode.Expression> elseClause() {
+            return elseClause;
+        }
+
+        @Override
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            return visitor.visitIfExpression(this);
+        }
     }
 
     public static class PrintExpression extends Expression {

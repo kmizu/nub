@@ -66,9 +66,25 @@ public class Main {
 
         @Override
         public Integer visitExpressionList(AstNode.ExpressionList node) {
-            Integer last = null;
+            Integer last = 0;
             for(AstNode.Expression e:node.expressions()) {
                 last = e.accept(this);
+            }
+            return last;
+        }
+
+        @Override
+        public Integer visitIfExpression(AstNode.IfExpression node) {
+            Integer condition = node.condition().accept(this);
+            Integer last = 0;
+            if(condition != 0) {
+                for(AstNode.Expression e:node.thenClause()) {
+                    last = e.accept(this);
+                }
+            } else {
+                for(AstNode.Expression e:node.elseClause()) {
+                    last = e.accept(this);
+                }
             }
             return last;
         }

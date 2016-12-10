@@ -4,6 +4,10 @@ program returns [AstNode.Expression e]
    : v=toplevels[new java.util.ArrayList<AstNode.Expression>()] {$e = new AstNode.ExpressionList($v.e); }
    ;
 
+block returns [List<AstNode.Expression> e]
+   :  LB v=toplevels[new java.util.ArrayList<AstNode.Expression>()] RB {$e = $v.e;}
+   ;
+
 toplevels[List<AstNode.Expression> es] returns [List<AstNode.Expression> e]
    : (v=toplevel {$es.add($v.e);})+ {$e = $es;}
    ;
@@ -12,6 +16,12 @@ toplevel returns [AstNode.Expression e]
    : w=letExpression {$e = $w.e;}
    | v=lineExpression {$e = $v.e;}
    | x=printExpression {$e = $x.e;}
+   | y=ifExpression {$e = $y.e;}
+   ;
+
+ifExpression returns [AstNode.IfExpression e]
+   : IF c=expression th=block ELSE el=block {$e = new AstNode.IfExpression($c.e, $th.e, $el.e);}
+   | IF c=expression th=block {$e = new AstNode.IfExpression($c.e, $th.e, new ArrayList<AstNode.Expression>());}
    ;
 
 lineExpression returns [AstNode.Expression e]
@@ -84,6 +94,12 @@ IN
     : 'in'
     ;
 
+IF  : 'if'
+    ;
+
+ELSE : 'else'
+    ;
+
 IDENTIFIER
    : IDENTIFIER_START IDENTIFIER_PART*
    ;
@@ -101,6 +117,12 @@ fragment IDENTIFIER_PART
 
 EQ
    : '='
+   ;
+
+LB : '{'
+   ;
+
+RB : '}'
    ;
 
 LP

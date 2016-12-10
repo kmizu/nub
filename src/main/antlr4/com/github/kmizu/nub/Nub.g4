@@ -37,6 +37,8 @@ conditional returns [AstNode.Expression e]
     | l=conditional op='>' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | l=conditional op='==' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | l=conditional op='!=' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=conditional op='&&' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=conditional op='||' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | v=additive {$e = $v.e;}
     ;
 

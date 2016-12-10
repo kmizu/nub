@@ -32,6 +32,14 @@ public class Main {
                     return (node.lhs().accept(this) == node.rhs().accept(this)) ? 1 : 0;
                 case "!=":
                     return (node.lhs().accept(this) != node.rhs().accept(this)) ? 1 : 0;
+                case "&&": {
+                	Integer value1 = node.lhs().accept(this);
+                	return value1 == 0 ? 0 : node.rhs().accept(this);
+                }
+                case "||": {
+                	Integer value1 = node.lhs().accept(this);
+                	return value1 != 1 ? value1 : node.rhs().accept(this);
+                }
                 default:
                     throw new RuntimeException("cannot reach here");
             }

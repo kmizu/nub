@@ -10,7 +10,7 @@ import java.io.StringReader;
 public class Main {
     public static void main(String[] args) throws IOException{
         if(args.length == 0) {
-            ANTLRInputStream input = new ANTLRInputStream(new StringReader("let x = 0; while(x < 10) { print(x); let x = x + 1; }"));
+            ANTLRInputStream input = new ANTLRInputStream(new StringReader("let x = 0; while(x < 10) { print(x); x = x + 1; }"));
             NubLexer lexer = new NubLexer(input);
             CommonTokenStream stream = new CommonTokenStream(lexer);
             AstNode.Expression expression = new NubParser(stream).program().e;

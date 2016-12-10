@@ -42,7 +42,12 @@ printExpression returns[AstNode.PrintExpression e]
     ;
 
 expression returns [AstNode.Expression e]
-    : v=logical {$e = $v.e;}
+    : v=assignment {$e = $v.e;}
+    ;
+
+assignment returns [AstNode.Expression e]
+    : name=IDENTIFIER EQ x=expression {$e = new AstNode.AssignmentOperation($name.getText(), $x.e);}
+    | v=logical {$e = $v.e;}
     ;
     
 logical returns [AstNode.Expression e]

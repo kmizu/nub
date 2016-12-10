@@ -12,6 +12,7 @@ public class AstNode {
         E visitExpressionList(ExpressionList node);
         E visitIfExpression(IfExpression node);
         E visitWhileExpression(WhileExpression node);
+        E visitAssignmentOperation(AssignmentOperation node);
     }
 
     public static abstract class Expression extends AstNode {
@@ -33,6 +34,23 @@ public class AstNode {
         }
 
         public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitLetExpression(this); }
+    }
+
+    public static class AssignmentOperation extends Expression {
+        private final String variableName;
+        private final AstNode.Expression expression;
+        public AssignmentOperation(String variableName, AstNode.Expression expression) {
+            this.variableName = variableName;
+            this.expression = expression;
+        }
+        public String variableName() {
+            return variableName;
+        }
+        public AstNode.Expression expression() {
+            return expression;
+        }
+
+        public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitAssignmentOperation(this); }
     }
 
     public static class IfExpression extends Expression {

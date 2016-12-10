@@ -49,6 +49,16 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     @Override
     public Integer visitLetExpression(AstNode.LetExpression node) {
         Integer value = node.expression().accept(this);
+        if(environment.containsKey(node.variableName())) {
+            throw new NubRuntimeException("variable " + node.variableName() + " is already defined");
+        }
+        environment.put(node.variableName(), value);
+        return value;
+    }
+
+    @Override
+    public Integer visitAssignmentOperation(AstNode.AssignmentOperation node) {
+        Integer value = node.expression().accept(this);
         environment.put(node.variableName(), value);
         return value;
     }

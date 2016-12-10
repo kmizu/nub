@@ -1,7 +1,4 @@
 grammar Nub;
-@header {
-  package com.github.kmizu.nub;
-}
 
 program returns [AstNode.Expression e]
    : v=toplevels[new java.util.ArrayList<AstNode.Expression>()] {$e = new AstNode.ExpressionList($v.e); }

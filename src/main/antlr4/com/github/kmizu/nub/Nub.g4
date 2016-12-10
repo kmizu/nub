@@ -17,6 +17,11 @@ toplevel returns [AstNode.Expression e]
    | v=lineExpression {$e = $v.e;}
    | x=printExpression {$e = $x.e;}
    | y=ifExpression {$e = $y.e;}
+   | z=whileExpression {$e = $z.e;}
+   ;
+
+whileExpression returns [AstNode.WhileExpression e]
+   : WHILE c=expression b=block {$e = new AstNode.WhileExpression($c.e, $b.e);}
    ;
 
 ifExpression returns [AstNode.IfExpression e]
@@ -99,6 +104,9 @@ IF  : 'if'
 
 ELSE : 'else'
     ;
+
+WHILE : 'while'
+   ;
 
 IDENTIFIER
    : IDENTIFIER_START IDENTIFIER_PART*

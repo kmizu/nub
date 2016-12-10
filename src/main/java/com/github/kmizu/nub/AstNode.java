@@ -11,6 +11,7 @@ public class AstNode {
         E visitPrintExpression(PrintExpression node);
         E visitExpressionList(ExpressionList node);
         E visitIfExpression(IfExpression node);
+        E visitWhileExpression(WhileExpression node);
     }
 
     public static abstract class Expression extends AstNode {
@@ -61,6 +62,28 @@ public class AstNode {
         @Override
         public <E> E accept(ExpressionVisitor<E> visitor) {
             return visitor.visitIfExpression(this);
+        }
+    }
+
+    public static class WhileExpression extends Expression {
+        private final AstNode.Expression condition;
+        private final List<AstNode.Expression> body;
+        public WhileExpression(AstNode.Expression condition, List<AstNode.Expression> body) {
+            this.condition = condition;
+            this.body = body;
+        }
+
+        public AstNode.Expression condition() {
+            return condition;
+        }
+
+        public List<AstNode.Expression> body() {
+            return body;
+        }
+
+        @Override
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            return visitor.visitWhileExpression(this);
         }
     }
 

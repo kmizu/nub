@@ -32,8 +32,25 @@ public class Main {
 
         @Override
         public Integer visitLetExpression(AstNode.LetExpression node) {
-            environment.put(node.variableName(), node.expression().accept(this));
-            return node.body().accept(this);
+            Integer value = node.expression().accept(this);
+            environment.put(node.variableName(), value);
+            return value;
+        }
+
+        @Override
+        public Integer visitPrintExpression(AstNode.PrintExpression node) {
+            Integer value = node.target().accept(this);
+            System.out.println(value);
+            return value;
+        }
+
+        @Override
+        public Integer visitExpressionList(AstNode.ExpressionList node) {
+            Integer last = null;
+            for(AstNode.Expression e:node.expressions()) {
+                last = e.accept(this);
+            }
+            return last;
         }
 
         @Override
@@ -42,10 +59,10 @@ public class Main {
         }
     }
     public static void main(String[] args) throws IOException{
-        ANTLRInputStream input = new ANTLRInputStream(new StringReader("let x = (1 + 2 + 3) * 4 / 5 in x * x;"));
+        ANTLRInputStream input = new ANTLRInputStream(new StringReader("let x = (1 + 2 + 3) * 4 / 4; print(x * x); x + x;"));
         NubLexer lexer = new NubLexer(input);
         CommonTokenStream stream = new CommonTokenStream(lexer);
-        AstNode.Expression expression = new NubParser(stream).toplevel().e;
+        AstNode.Expression expression = new NubParser(stream).program().e;
         System.out.println(expression.accept(new Evaluator()));
     }
 }

@@ -1,11 +1,15 @@
 package com.github.kmizu.nub;
 
+import java.util.List;
+
 public class AstNode {
     public static interface ExpressionVisitor<E> {
         E visitBinaryOperation(BinaryOperation node);
         E visitNumber(Number node);
         E visitLetExpression(LetExpression node);
         E visitIdentifier(Identifier node);
+        E visitPrintExpression(PrintExpression node);
+        E visitExpressionList(ExpressionList node);
     }
 
     public static abstract class Expression extends AstNode {
@@ -15,11 +19,9 @@ public class AstNode {
     public static class LetExpression extends Expression {
         private final String variableName;
         private final AstNode.Expression expression;
-        private final AstNode.Expression body;
-        public LetExpression(String variableName, AstNode.Expression expression, AstNode.Expression body) {
+        public LetExpression(String variableName, AstNode.Expression expression) {
             this.variableName = variableName;
             this.expression = expression;
-            this.body = body;
         }
         public String variableName() {
             return variableName;
@@ -27,11 +29,38 @@ public class AstNode {
         public AstNode.Expression expression() {
             return expression;
         }
-        public AstNode.Expression body() {
-            return body;
-        }
 
         public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitLetExpression(this); }
+    }
+
+    public static class PrintExpression extends Expression {
+        private final AstNode.Expression target;
+        public PrintExpression(AstNode.Expression target) {
+            this.target = target;
+        }
+        public AstNode.Expression target() {
+            return target;
+        }
+
+        @Override
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            return visitor.visitPrintExpression(this);
+        }
+    }
+
+    public static class ExpressionList extends Expression {
+        private final List<Expression> expressions;
+        public ExpressionList(List<Expression> expressions) {
+            this.expressions = expressions;
+        }
+        public List<Expression> expressions() {
+            return expressions;
+        }
+
+        @Override
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            return visitor.visitExpressionList(this);
+        }
     }
 
     public static class BinaryOperation extends Expression {

@@ -3,17 +3,30 @@ grammar Nub;
   package com.github.kmizu.nub;
 }
 
-toplevel returns [AstNode.Expression e]
-   : w=letExpression {$e = $w.e;}
-   | v=expressionStatement {$e = $v.e;}
+program returns [AstNode.Expression e]
+   : v=toplevels[new java.util.ArrayList<AstNode.Expression>()] {$e = new AstNode.ExpressionList($v.e); }
    ;
 
-expressionStatement returns [AstNode.Expression e]
+toplevels[List<AstNode.Expression> es] returns [List<AstNode.Expression> e]
+   : (v=toplevel {$es.add($v.e);})+ {$e = $es;}
+   ;
+
+toplevel returns [AstNode.Expression e]
+   : w=letExpression {$e = $w.e;}
+   | v=lineExpression {$e = $v.e;}
+   | x=printExpression {$e = $x.e;}
+   ;
+
+lineExpression returns [AstNode.Expression e]
    : v=expression SEMICOLON {$e = $v.e;}
    ;
 
 letExpression returns [AstNode.LetExpression e]
-    : LET name=IDENTIFIER EQ v=expression IN b=expression SEMICOLON {$e = new AstNode.LetExpression($name.getText(), $v.e, $b.e);}
+    : LET name=IDENTIFIER EQ v=expression SEMICOLON {$e = new AstNode.LetExpression($name.getText(), $v.e);}
+    ;
+
+printExpression returns[AstNode.PrintExpression e]
+    : PRINT LP v=expression RP SEMICOLON {$e = new AstNode.PrintExpression($v.e);}
     ;
 
 expression returns [AstNode.Expression e]
@@ -46,6 +59,10 @@ fragment ESC :   '\\' (["\\/bfnrt] | UNICODE) ;
 fragment UNICODE : 'u' HEX HEX HEX HEX ;
 fragment HEX : [0-9a-fA-F] ;
 
+PRINT
+    : 'print'
+    ;
+
 LET
     : 'let'
     ;
@@ -71,6 +88,13 @@ fragment IDENTIFIER_PART
 
 EQ
    : '='
+   ;
+
+LP
+   : '('
+   ;
+
+RP : ')'
    ;
 
 NUMBER

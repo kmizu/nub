@@ -29,6 +29,12 @@ printExpression returns[AstNode.PrintExpression e]
 expression returns [AstNode.Expression e]
     : v=conditional {$e = $v.e;}
     ;
+    
+logical returns [AstNode.Expression e]
+    : l=logical op='&&' r=conditional {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=logical op='||' r=conditional {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | v=conditional {$e = $v.e;}
+    ;
 
 conditional returns [AstNode.Expression e]
     : l=conditional op='<=' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
@@ -37,8 +43,6 @@ conditional returns [AstNode.Expression e]
     | l=conditional op='>' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | l=conditional op='==' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | l=conditional op='!=' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
-    | l=conditional op='&&' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
-    | l=conditional op='||' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | v=additive {$e = $v.e;}
     ;
 

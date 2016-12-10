@@ -114,4 +114,11 @@ Note that `let` should be used only when variable declaration.  Assignment opera
 
 ## Comment
 
-Comments are not supported yet.
+Line comments are supported.  For example,
+
+```
+// abcdef
+1 + 2; // 3
+```
+
+The above `//abcdef` is ignored.

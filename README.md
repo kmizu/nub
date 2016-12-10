@@ -54,3 +54,64 @@ x + y;
 1 != 2
 3 != 2
 ```
+
+## Print
+
+### Syntax
+
+```java
+print(expression);
+```
+
+Currently, only printing integer is allowed.  In the future, this restriction should be relaxed.
+
+## Conditional Expression
+
+### Syntax
+
+```
+if (condition) {
+  expression
+  ...
+} (else {
+  expression
+  ...
+})?
+```
+
+### Example
+
+```
+if(1 < 2) {
+  print(1);
+}else {
+  print(2);
+}
+```
+
+## Loop Expression
+
+### Syntax
+
+```
+while(condition) {
+  expression
+  ...
+}
+```
+
+### Example
+
+```
+let i = 0;
+while(i < 10) {
+  print(i);
+  let i = i + 1;
+}
+```
+
+Note that `let` should be used only when variable declaration.  Assignment operator should be introduced in the future.
+
+## Comment
+
+Comments are not supported yet.

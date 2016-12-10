@@ -20,6 +20,18 @@ public class Main {
                     return node.lhs().accept(this) * node.rhs().accept(this);
                 case "/":
                     return node.lhs().accept(this) / node.rhs().accept(this);
+                case "<=":
+                    return (node.lhs().accept(this) <= node.rhs().accept(this)) ? 1 : 0;
+                case ">=":
+                    return (node.lhs().accept(this) >= node.rhs().accept(this)) ? 1 : 0;
+                case "<":
+                    return (node.lhs().accept(this) < node.rhs().accept(this)) ? 1 : 0;
+                case ">":
+                    return (node.lhs().accept(this) > node.rhs().accept(this)) ? 1 : 0;
+                case "==":
+                    return (node.lhs().accept(this) == node.rhs().accept(this)) ? 1 : 0;
+                case "!=":
+                    return (node.lhs().accept(this) == node.rhs().accept(this)) ? 1 : 0;
                 default:
                     throw new RuntimeException("cannot reach here");
             }

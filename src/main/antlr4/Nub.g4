@@ -30,7 +30,17 @@ printExpression returns[AstNode.PrintExpression e]
     ;
 
 expression returns [AstNode.Expression e]
-    : v=additive {$e = $v.e;}
+    : v=conditional {$e = $v.e;}
+    ;
+
+conditional returns [AstNode.Expression e]
+    : l=conditional op='<=' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=conditional op='>=' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=conditional op='<' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=conditional op='>' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=conditional op='==' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=conditional op='!=' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | v=additive {$e = $v.e;}
     ;
 
 additive returns [AstNode.Expression e]

@@ -14,10 +14,33 @@ public class AstNode {
         E visitWhileExpression(WhileExpression node);
         E visitAssignmentOperation(AssignmentOperation node);
         E visitPrintlnExpression(PrintlnExpression node);
+        E visitDefFunction(DefFunction node);
     }
 
     public static abstract class Expression extends AstNode {
         public abstract <E> E accept(ExpressionVisitor<E> visitor);
+    }
+
+    public static class DefFunction extends Expression {
+        private final String name;
+        private final List<String> params;
+        private final List<AstNode.Expression> body;
+        public DefFunction(String name, List<String> params, List<AstNode.Expression> body) {
+            this.name = name;
+            this.params = params;
+            this.body = body;
+        }
+        public String name() {
+            return name;
+        }
+        public List<String> params() {
+            return params;
+        }
+        public List<AstNode.Expression> body() {
+            return body;
+        }
+
+        public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitDefFunction(this); }
     }
 
     public static class LetExpression extends Expression {

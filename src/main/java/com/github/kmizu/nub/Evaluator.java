@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     private Map<String, Integer> environment = new HashMap<>();
+    private Map<String, AstNode.DefFunction> functions = new HashMap<>();
 
     public Integer visitBinaryOperation(AstNode.BinaryOperation node) {
         switch (node.operator()) {
@@ -114,7 +115,22 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     }
 
     @Override
+    public Integer visitDefFunction(AstNode.DefFunction node) {
+        return null;
+    }
+
+    @Override
     public Integer visitIdentifier(AstNode.Identifier node) {
         return environment.get(node.name());
+    }
+
+    public Integer evaluate(AstNode.ExpressionList program) {
+        for(AstNode.Expression top:program.expressions()) {
+            if(top instanceof AstNode.DefFunction) {
+                AstNode.DefFunction f = (AstNode.DefFunction)top;
+                functions.put(f.name(), f);
+            }
+        }
+        return program.accept(this);
     }
 }

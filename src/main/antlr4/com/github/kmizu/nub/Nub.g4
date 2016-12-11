@@ -1,6 +1,6 @@
 grammar Nub;
 
-program returns [AstNode.Expression e]
+program returns [AstNode.ExpressionList e]
    : v=toplevels[new java.util.ArrayList<AstNode.Expression>()] EOF {$e = new AstNode.ExpressionList($v.e); }
    ;
 
@@ -13,12 +13,23 @@ toplevels[List<AstNode.Expression> es] returns [List<AstNode.Expression> e]
    ;
 
 toplevel returns [AstNode.Expression e]
-   : w=letExpression {$e = $w.e;}
-   | v=lineExpression {$e = $v.e;}
-   | x=printExpression {$e = $x.e;}
-   | a=printlnExpression {$e = $a.e;}
-   | y=ifExpression {$e = $y.e;}
-   | z=whileExpression {$e = $z.e;}
+   : letExpression {$e = $letExpression.e;}
+   | lineExpression {$e = $lineExpression.e;}
+   | printExpression {$e = $printExpression.e;}
+   | printlnExpression {$e = $printlnExpression.e;}
+   | ifExpression {$e = $ifExpression.e;}
+   | whileExpression {$e = $whileExpression.e;}
+   | defFunction {$e = $defFunction.e;}
+   ;
+
+defFunction returns [AstNode.DefFunction e]
+   : DEF n=IDENTIFIER LP ps=params RP b=block { $e = new AstNode.DefFunction($n.getText(), $ps.result, $b.e); }
+   ;
+
+params returns [List<String> result]
+   locals[List<String> ps = new ArrayList<String>();}]
+   : n=IDENTIFIER {$ps.add($n.getText());} (',' n=IDENTIFIER {$ps.add($n.getText());})* { $result = $ps; }
+   | { $result = new ArrayList<String>(); }
    ;
 
 whileExpression returns [AstNode.WhileExpression e]
@@ -96,6 +107,10 @@ identifier returns [AstNode.Identifier e]
 fragment ESC :   '\\' (["\\/bfnrt] | UNICODE) ;
 fragment UNICODE : 'u' HEX HEX HEX HEX ;
 fragment HEX : [0-9a-fA-F] ;
+
+DEF
+    : 'def'
+    ;
 
 PRINTLN
     : 'println'

@@ -20,8 +20,9 @@ public class Main {
             ANTLRInputStream antlrInput = new ANTLRInputStream(new FileInputStream(new File(fileName)));
             CommonTokenStream stream = new CommonTokenStream(new NubLexer(antlrInput));
             NubParser parser = new NubParser(stream);
-            AstNode.Expression program = parser.program().e;
-            program.accept(new Evaluator());
+            AstNode.ExpressionList program = parser.program().e;
+            Evaluator evaluator = new Evaluator();
+            evaluator.evaluate(program);
         }
     }
 }

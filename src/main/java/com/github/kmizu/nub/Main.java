@@ -10,11 +10,12 @@ import java.io.StringReader;
 public class Main {
     public static void main(String[] args) throws IOException{
         if(args.length == 0) {
-            ANTLRInputStream input = new ANTLRInputStream(new StringReader("let x = 0; while(x < 10) { println(x); x = x + 1; } // Loop"));
+            ANTLRInputStream input = new ANTLRInputStream(new StringReader("def printRange(from, to) { let i = from; while(i < to) { println(i); i = i + 1; } } printRange(1, 10); // Loop"));
             NubLexer lexer = new NubLexer(input);
             CommonTokenStream stream = new CommonTokenStream(lexer);
-            AstNode.Expression expression = new NubParser(stream).program().e;
-            System.out.println(expression.accept(new Evaluator()));
+            AstNode.ExpressionList program = new NubParser(stream).program().e;
+            Evaluator evaluator = new Evaluator();
+            evaluator.evaluate(program);
         } else {
             String fileName = args[0];
             ANTLRInputStream antlrInput = new ANTLRInputStream(new FileInputStream(new File(fileName)));

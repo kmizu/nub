@@ -15,26 +15,44 @@ public class AstNode {
         E visitAssignmentOperation(AssignmentOperation node);
         E visitPrintlnExpression(PrintlnExpression node);
         E visitDefFunction(DefFunction node);
+        E visitFunctionCall(FunctionCall node);
     }
 
     public static abstract class Expression extends AstNode {
         public abstract <E> E accept(ExpressionVisitor<E> visitor);
     }
 
-    public static class DefFunction extends Expression {
-        private final String name;
-        private final List<String> params;
-        private final List<AstNode.Expression> body;
-        public DefFunction(String name, List<String> params, List<AstNode.Expression> body) {
+    public static class FunctionCall extends Expression {
+        private final AstNode.Identifier       name;
+        private final List<AstNode.Expression> params;
+        public FunctionCall(AstNode.Identifier name, List<AstNode.Expression> params) {
             this.name = name;
             this.params = params;
+        }
+        public AstNode.Identifier name() {
+            return name;
+        }
+        public List<AstNode.Expression> params() {
+            return params;
+        }
+
+        public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitFunctionCall(this); }
+    }
+
+    public static class DefFunction extends Expression {
+        private final String                   name;
+        private final List<String>             args;
+        private final List<AstNode.Expression> body;
+        public DefFunction(String name, List<String> args, List<AstNode.Expression> body) {
+            this.name = name;
+            this.args = args;
             this.body = body;
         }
         public String name() {
             return name;
         }
-        public List<String> params() {
-            return params;
+        public List<String> args() {
+            return args;
         }
         public List<AstNode.Expression> body() {
             return body;

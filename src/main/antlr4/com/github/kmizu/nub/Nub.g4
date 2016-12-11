@@ -27,9 +27,10 @@ defFunction returns [AstNode.DefFunction e]
    ;
 
 params returns [List<String> result]
-   locals[List<String> ps = new ArrayList<String>();}]
-   : n=IDENTIFIER {$ps.add($n.getText());} (',' n=IDENTIFIER {$ps.add($n.getText());})* { $result = $ps; }
-   | { $result = new ArrayList<String>(); }
+   @init {
+     List<String> ps = new ArrayList<String>();
+   }
+   : (n=IDENTIFIER {ps.add($n.getText());} (',' n=IDENTIFIER {ps.add($n.getText());})*)? { $result = ps; }
    ;
 
 whileExpression returns [AstNode.WhileExpression e]
@@ -95,7 +96,10 @@ multitive returns [AstNode.Expression e]
     ;
 
 primary returns [AstNode.Expression e]
-    : v=identifier {$e = $v.e;}
+    @init {
+      List<AstNode.Expression> params = new ArrayList<AstNode.Expression>();
+    }
+    : v=identifier {$e = $v.e;} (LP (p=expression {params.add($p.e);} (',' p=expression {params.add($p.e);})*) RP {$e = new AstNode.FunctionCall($v.e, params);})?
     | n=NUMBER {$e = new AstNode.Number(Integer.parseInt($n.getText()));}
     | '(' x=expression ')' {$e = $x.e;}
     ;

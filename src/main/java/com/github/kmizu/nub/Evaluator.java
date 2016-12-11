@@ -1,10 +1,38 @@
 package com.github.kmizu.nub;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
-    private Map<String, Integer> environment = new HashMap<>();
+    public static class Environment {
+        public final Map<String, Integer> mapping = new HashMap<>();
+        public final Environment parent;
+        public Environment(Environment parent) {
+            this.parent = parent;
+        }
+
+        public Integer find(String name) {
+            Integer value = mapping.get(name);
+            if(value == null && parent != null) {
+                value = parent.find(name);
+            }
+            return value;
+        }
+
+        public boolean contains(String name) {
+            boolean contains = mapping.containsKey(name);
+            if(contains)
+                return true;
+            else
+                return parent != null ? parent.contains(name) : false;
+        }
+
+        public Integer register(String name, Integer value) {
+            return mapping.put(name, value);
+        }
+    }
+    private Environment environment = new Environment(null);
     private Map<String, AstNode.DefFunction> functions = new HashMap<>();
 
     public Integer visitBinaryOperation(AstNode.BinaryOperation node) {
@@ -50,17 +78,20 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     @Override
     public Integer visitLetExpression(AstNode.LetExpression node) {
         Integer value = node.expression().accept(this);
-        if(environment.containsKey(node.variableName())) {
+        if(environment.contains(node.variableName())) {
             throw new NubRuntimeException("variable " + node.variableName() + " is already defined");
         }
-        environment.put(node.variableName(), value);
+        environment.register(node.variableName(), value);
         return value;
     }
 
     @Override
     public Integer visitAssignmentOperation(AstNode.AssignmentOperation node) {
         Integer value = node.expression().accept(this);
-        environment.put(node.variableName(), value);
+        if(!environment.contains(node.variableName())) {
+            throw new NubRuntimeException("variable " + node.variableName() + " is not defined");
+        }
+        environment.register(node.variableName(), value);
         return value;
     }
 
@@ -121,7 +152,7 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
 
     @Override
     public Integer visitIdentifier(AstNode.Identifier node) {
-        return environment.get(node.name());
+        return environment.find(node.name());
     }
 
     public Integer evaluate(AstNode.ExpressionList program) {
@@ -132,5 +163,30 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
             }
         }
         return program.accept(this);
+    }
+
+    @Override
+    public Integer visitFunctionCall(AstNode.FunctionCall node) {
+        AstNode.DefFunction function = functions.get(node.name().name());
+        if(function == null) {
+            throw new NubRuntimeException("function " + node.name().name() + "is not defined");
+        }
+        List<String> args = function.args();
+        if(args.size() != node.params().size()) {
+            throw new NubRuntimeException("function arity mismatch! required length: " + args.size() + " actual length:" + node.params().size());
+        }
+        Environment newEnvironment = new Environment(environment);
+        {
+            for (int i = 0; i < args.size(); i++) {
+                newEnvironment.register(args.get(i), node.params().get(i).accept(this));
+            }
+            environment = newEnvironment;
+            Integer last = 0;
+            for (AstNode.Expression e : function.body()) {
+                last = e.accept(this);
+            }
+            environment = environment.parent;
+            return last;
+        }
     }
 }

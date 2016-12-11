@@ -125,3 +125,16 @@ Line comments are supported.  For example,
 ```
 
 The above `//abcdef` is ignored.
+
+## Function Definition & Invocation
+
+```
+def printRange(from, to) {
+  let i = from;
+  while(i <= to) {
+    println(i);
+    i += 1;
+  }
+}
+printRange(1, 10); // from 1 to 10 are printed
+```

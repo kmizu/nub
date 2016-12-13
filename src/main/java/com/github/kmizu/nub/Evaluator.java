@@ -32,6 +32,7 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
             return mapping.put(name, value);
         }
     }
+
     private Environment environment = new Environment(null);
     private Map<String, AstNode.DefFunction> functions = new HashMap<>();
 
@@ -173,7 +174,7 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
         }
         List<String> args = function.args();
         if(args.size() != node.params().size()) {
-            throw new NubRuntimeException("function arity mismatch! required length: " + args.size() + " actual length:" + node.params().size());
+            throw new NubRuntimeException("function " + node.name().name() + " arity mismatch! required length: " + args.size() + " actual length:" + node.params().size());
         }
         Environment newEnvironment = new Environment(environment);
         {
@@ -182,11 +183,21 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
             }
             environment = newEnvironment;
             Integer last = 0;
-            for (AstNode.Expression e : function.body()) {
-                last = e.accept(this);
+            try {
+                for (AstNode.Expression e : function.body()) {
+                    last = e.accept(this);
+                }
+            }catch(ReturnException ex) {
+                last = ex.value();
             }
             environment = environment.parent;
             return last;
         }
+    }
+
+    @Override
+    public Integer visitReturn(AstNode.Return node) {
+        Integer value = node.expression().accept(this);
+        throw new ReturnException(value);
     }
 }

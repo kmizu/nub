@@ -20,6 +20,7 @@ toplevel returns [AstNode.Expression e]
    | ifExpression {$e = $ifExpression.e;}
    | whileExpression {$e = $whileExpression.e;}
    | defFunction {$e = $defFunction.e;}
+   | returnExpression {$e = $returnExpression.e;}
    ;
 
 defFunction returns [AstNode.DefFunction e]
@@ -32,6 +33,10 @@ params returns [List<String> result]
    }
    : (n=IDENTIFIER {ps.add($n.getText());} (',' n=IDENTIFIER {ps.add($n.getText());})*)? { $result = ps; }
    ;
+
+returnExpression returns [AstNode.Return e]
+  : RETURN c=expression SEMICOLON {$e = new AstNode.Return($c.e);}
+  ;
 
 whileExpression returns [AstNode.WhileExpression e]
    : WHILE c=expression b=block {$e = new AstNode.WhileExpression($c.e, $b.e);}
@@ -99,7 +104,7 @@ primary returns [AstNode.Expression e]
     @init {
       List<AstNode.Expression> params = new ArrayList<AstNode.Expression>();
     }
-    : v=identifier {$e = $v.e;} (LP (p=expression {params.add($p.e);} (',' p=expression {params.add($p.e);})*) RP {$e = new AstNode.FunctionCall($v.e, params);})?
+    : v=identifier {$e = $v.e;} (LP ((p=expression {params.add($p.e);} (',' p=expression {params.add($p.e);})*)?) RP {$e = new AstNode.FunctionCall($v.e, params);})?
     | n=NUMBER {$e = new AstNode.Number(Integer.parseInt($n.getText()));}
     | '(' x=expression ')' {$e = $x.e;}
     ;
@@ -139,6 +144,9 @@ ELSE : 'else'
     ;
 
 WHILE : 'while'
+   ;
+
+RETURN : 'return'
    ;
 
 IDENTIFIER

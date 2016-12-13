@@ -3,7 +3,7 @@ package com.github.kmizu.nub;
 import java.util.List;
 
 public class AstNode {
-    public static interface ExpressionVisitor<E> {
+    public interface ExpressionVisitor<E> {
         E visitBinaryOperation(BinaryOperation node);
         E visitNumber(Number node);
         E visitLetExpression(LetExpression node);
@@ -16,6 +16,7 @@ public class AstNode {
         E visitPrintlnExpression(PrintlnExpression node);
         E visitDefFunction(DefFunction node);
         E visitFunctionCall(FunctionCall node);
+        E visitReturn(Return node);
     }
 
     public static abstract class Expression extends AstNode {
@@ -37,6 +38,23 @@ public class AstNode {
         }
 
         public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitFunctionCall(this); }
+    }
+
+    public static class Return extends Expression {
+        private final Expression expression;
+
+        public Return(Expression expression) {
+            this.expression = expression;
+        }
+
+        public Expression expression() {
+            return expression;
+        }
+
+        @Override
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            return visitor.visitReturn(this);
+        }
     }
 
     public static class DefFunction extends Expression {

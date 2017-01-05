@@ -14,7 +14,7 @@ MavenがANTLR4プラグインを提供するため、ANTLR4は必要ありませ
 
 ## 開発者向けドキュメント
 
-[How To Run](HOW_TO_RUN.html)
+[How To Run](HOW_TO_RUN.md)
 
 ## 整数リテラル
 

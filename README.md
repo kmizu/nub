@@ -1,16 +1,18 @@
 # Nub: A Tiny Programming Language
 
-This repository is for [a programming language hands on](https://connpass.com/event/41184/).
-Nub means **a small piece** in English.  Nub grammer is written in [ANTLR4](http://www.antlr.org/) and
-nub interpreter is written in Java.
+このレポジトリは[プログラミング言語作成ハンズオン](https://connpass.com/event/41184/)向けのレポジトリです。
+Nubとは英語で**小さな塊や隆起**を意味する言葉です。
+Nubの文法は[ANTLR4](http://www.antlr.org/)を使って書かれています。
+NubのインタプリタはJavaを使って書かれています。
 
-Maven 3 is required to compile nub.  ANTLR4 is not required since Maven provides ANTLR4 plugin.
+NubのコンパイルにはMaven 3が必要です。
+MavenがANTLR4プラグインを提供するため、ANTLR4は必要ありません。
 
-* `src/main/antl4/com/github/kmizu/nub/Nub.g`: ANTLR grammar definition of Nub programming language
-* `src/main/java/...`: Java source code
-* `pom.xml`: For maven
+* `src/main/antl4/com/github/kmizu/nub/Nub.g`: ANTLRによるNubの文法定義
+* `src/main/java/...`: Javaソースコード
+* `pom.xml`: Maven用コンフィグ
 
-## Integer Literal
+## 整数リテラル
 
 ```java
 1
@@ -21,7 +23,7 @@ Maven 3 is required to compile nub.  ANTLR4 is not required since Maven provides
 ...
 ```
 
-## Arithmetic Expression
+## 四則演算式
 
 ```java
 1 + 2
@@ -30,9 +32,9 @@ Maven 3 is required to compile nub.  ANTLR4 is not required since Maven provides
 (1 + 2) * 3 / 4
 ```
 
-## Variable Declaration & Assignment & Reference
+## 値宣言・代入・呼出
 
-Note that semicolon is required at the end of line
+各プログラムの行の最後にはセミコロンが必要です。
 
 ```java
 let x = 1;
@@ -43,7 +45,7 @@ print(x + y); //4
 // let x = 1; is not allowed since x is already defined
 ```
 
-## Comparison Expression
+## 比較演算式
 
 ```java
 1 < 2
@@ -58,19 +60,20 @@ print(x + y); //4
 3 != 2
 ```
 
-## Print
+## プリント
 
-### Syntax
+### 文法
 
 ```java
 print(expression);
 ```
 
-Currently, only printing integer is allowed.  In the future, this restriction should be relaxed.
+初期は整数値の表示のみ対応しています。
+将来的に整数値以外にも対応する予定です。
 
-## Conditional Expression
+## 条件式
 
-### Syntax
+### 文法
 
 ```
 if (condition) {
@@ -82,7 +85,7 @@ if (condition) {
 })?
 ```
 
-### Example
+### 例
 
 ```
 if(1 < 2) {
@@ -92,9 +95,9 @@ if(1 < 2) {
 }
 ```
 
-## Loop Expression
+## ループ式
 
-### Syntax
+### 文法
 
 ```
 while(condition) {
@@ -103,30 +106,31 @@ while(condition) {
 }
 ```
 
-### Example
+### 例
 
 ```
 let i = 0;
 while(i < 10) {
   print(i);
-  let i = i + 1;
+  i = i + 1;
 }
 ```
 
-Note that `let` should be used only when variable declaration.  Assignment operator should be introduced in the future.
+値宣言には`let`を使います。代入演算sもサポートされています。
 
-## Comment
+## コメント
 
-Line comments are supported.  For example,
+行コメントをサポートします。
+例えば、
 
 ```
 // abcdef
 1 + 2; // 3
 ```
 
-The above `//abcdef` is ignored.
+上記の`//abcdef`は無視されます。
 
-## Function Definition & Invocation
+## 関数宣言・呼出
 
 ```
 def printRange(from, to) {

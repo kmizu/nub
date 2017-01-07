@@ -3,6 +3,7 @@ package com.github.kmizu.nub;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     public static class Environment {
@@ -18,6 +19,13 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
                 value = parent.find(name);
             }
             return value;
+        }
+
+        public Optional<Environment> findEnvironment(String name) {
+            if(mapping.containsKey(name))
+                return Optional.of(this);
+            else
+                return parent != null ? parent.findEnvironment(name) : Optional.empty();
         }
 
         public boolean contains(String name) {
@@ -89,10 +97,12 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     @Override
     public Integer visitAssignmentOperation(AstNode.AssignmentOperation node) {
         Integer value = node.expression().accept(this);
-        if(!environment.contains(node.variableName())) {
+        Optional<Environment> found = environment.findEnvironment(node.variableName());
+        if(!found.isPresent()) {
             throw new NubRuntimeException("variable " + node.variableName() + " is not defined");
+        } else {
+            found.get().register(node.variableName(), value);
         }
-        environment.register(node.variableName(), value);
         return value;
     }
 

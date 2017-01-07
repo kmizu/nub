@@ -1,0 +1,10 @@
+let a = 1;
+def incr () {
+    a = a + 1;
+}
+
+print(a);
+incr();
+print(a);
+incr();
+print(a);

@@ -163,7 +163,11 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
 
     @Override
     public Integer visitIdentifier(AstNode.Identifier node) {
-        return environment.find(node.name());
+        Integer ret = environment.find(node.name());
+        if (ret == null)
+            throw new NubRuntimeException(node.name() + " is not defined");
+        else
+            return ret;
     }
 
     public Integer evaluate(AstNode.ExpressionList program) {

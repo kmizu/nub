@@ -182,7 +182,7 @@ RP : ')'
    ;
 
 NUMBER
-    : '-'? INT
+    : INT
     ;
 
 SEMICOLON

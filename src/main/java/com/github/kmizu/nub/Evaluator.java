@@ -42,6 +42,7 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     }
 
     private Environment environment = new Environment(null);
+    private Environment globalEnvironment = environment;
     private Map<String, AstNode.DefFunction> functions = new HashMap<>();
 
     public Integer visitBinaryOperation(AstNode.BinaryOperation node) {
@@ -190,12 +191,12 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
         if(args.size() != node.params().size()) {
             throw new NubRuntimeException("function " + node.name().name() + " arity mismatch! required length: " + args.size() + " actual length:" + node.params().size());
         }
-        Environment newEnvironment = new Environment(environment);
         {
+            Environment prevEnvironment = environment;
+            environment = new Environment(globalEnvironment);
             for (int i = 0; i < args.size(); i++) {
-                newEnvironment.register(args.get(i), node.params().get(i).accept(this));
+                environment.register(args.get(i), node.params().get(i).accept(this));
             }
-            environment = newEnvironment;
             Integer last = 0;
             try {
                 for (AstNode.Expression e : function.body()) {
@@ -204,7 +205,7 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
             }catch(ReturnException ex) {
                 last = ex.value();
             }
-            environment = environment.parent;
+            environment = prevEnvironment;
             return last;
         }
     }

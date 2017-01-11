@@ -184,7 +184,7 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     public Integer visitFunctionCall(AstNode.FunctionCall node) {
         AstNode.DefFunction function = functions.get(node.name().name());
         if(function == null) {
-            throw new NubRuntimeException("function " + node.name().name() + "is not defined");
+            throw new NubRuntimeException("function " + node.name().name() + " is not defined");
         }
         List<String> args = function.args();
         if(args.size() != node.params().size()) {

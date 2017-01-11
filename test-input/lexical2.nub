@@ -1,0 +1,15 @@
+// this script should not work and raise an error:
+//   com.github.kmizu.nub.NubRuntimeException: foo is not defined
+
+def fun1() {
+  let foo = 1;
+  fun2();
+  println(foo);
+}
+
+def fun2() {
+  println(foo);
+  foo = 2;
+}
+
+fun1();

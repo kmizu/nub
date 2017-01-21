@@ -106,6 +106,7 @@ primary returns [AstNode.Expression e]
     }
     : v=identifier {$e = $v.e;} (LP ((p=expression {params.add($p.e);} (',' p=expression {params.add($p.e);})*)?) RP {$e = new AstNode.FunctionCall($v.e, params);})?
     | n=NUMBER {$e = new AstNode.Number(Integer.parseInt($n.getText()));}
+    | s=STRING {$e = new AstNode.StringLiteral($s.getText());}
     | '(' x=expression ')' {$e = $x.e;}
     ;
 
@@ -113,9 +114,6 @@ identifier returns [AstNode.Identifier e]
     : i=IDENTIFIER {$e = new AstNode.Identifier($i.getText());}
     ;
 
-fragment ESC :   '\\' (["\\/bfnrt] | UNICODE) ;
-fragment UNICODE : 'u' HEX HEX HEX HEX ;
-fragment HEX : [0-9a-fA-F] ;
 
 DEF
     : 'def'
@@ -200,12 +198,7 @@ WS  :   [ \t\n\r]+ -> skip ;
 STRING
    : '"' (ESC | ~ ["\\])* '"'
    ;
-fragment ESC
-   : '\\' (["\\/bfnrt] | UNICODE)
-   ;
-fragment UNICODE
-   : 'u' HEX HEX HEX HEX
-   ;
-fragment HEX
-   : [0-9a-fA-F]
-   ;
+
+fragment ESC :   '\\' (["\\/bfnrt] | UNICODE) ;
+fragment UNICODE : 'u' HEX HEX HEX HEX ;
+fragment HEX : [0-9a-fA-F] ;

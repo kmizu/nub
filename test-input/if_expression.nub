@@ -1,0 +1,6 @@
+let x = if(1 < 2 ) {
+  2;
+} else {
+  3;
+};
+println(x);

@@ -108,6 +108,8 @@ primary returns [AstNode.Expression e]
     | n=NUMBER {$e = new AstNode.Number(Integer.parseInt($n.getText()));}
     | s=STRING {$e = new AstNode.StringLiteral($s.getText());}
     | '(' x=expression ')' {$e = $x.e;}
+    | ifExpression {$e = $ifExpression.e;}
+    | whileExpression {$e = $whileExpression.e;}
     ;
 
 identifier returns [AstNode.Identifier e]

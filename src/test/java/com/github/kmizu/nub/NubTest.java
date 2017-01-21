@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class NubTest {
-    static Integer eval(String input) throws Exception {
+    static Object eval(String input) throws Exception {
         return new Evaluator().evaluate(new NubParser(Streams.streamFrom(input)).program().e);
     }
 

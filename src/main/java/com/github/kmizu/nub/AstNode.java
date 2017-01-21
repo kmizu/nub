@@ -1,12 +1,13 @@
 package com.github.kmizu.nub;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.List;
 
 public class AstNode {
     public interface ExpressionVisitor<E> {
         E visitBinaryOperation(BinaryOperation node);
         E visitNumber(Number node);
-        E visitStringLiteral(StringLiteral node);
         E visitLetExpression(LetExpression node);
         E visitIdentifier(Identifier node);
         E visitPrintExpression(PrintExpression node);
@@ -244,7 +245,9 @@ public class AstNode {
         public String value() { return value.substring(1, value.length() - 1); }
 
         @Override
-        public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitStringLiteral(this); }
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            throw new NotImplementedException();
+        }
     }
 
     public static class Identifier extends Expression {

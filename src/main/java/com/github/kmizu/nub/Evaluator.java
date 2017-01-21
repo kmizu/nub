@@ -229,9 +229,4 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
         Object value = node.expression().accept(this);
         throw new ReturnException(value);
     }
-
-    @Override
-    public Object visitStringLiteral(AstNode.StringLiteral node) {
-        return node.value();
-    }
 }

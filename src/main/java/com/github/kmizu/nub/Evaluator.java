@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
+public class Evaluator implements AstNode.ExpressionVisitor<Object> {
     public static class Environment {
-        public final Map<String, Integer> mapping = new HashMap<>();
+        public final Map<String, Object> mapping = new HashMap<>();
         public final Environment parent;
         public Environment(Environment parent) {
             this.parent = parent;
         }
 
-        public Integer find(String name) {
-            Integer value = mapping.get(name);
+        public Object find(String name) {
+            Object value = mapping.get(name);
             if(value == null && parent != null) {
                 value = parent.find(name);
             }
@@ -36,7 +36,7 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
                 return parent != null ? parent.contains(name) : false;
         }
 
-        public Integer register(String name, Integer value) {
+        public Object register(String name, Object value) {
             return mapping.put(name, value);
         }
     }
@@ -45,34 +45,48 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     private Environment globalEnvironment = environment;
     private Map<String, AstNode.DefFunction> functions = new HashMap<>();
 
-    public Integer visitBinaryOperation(AstNode.BinaryOperation node) {
+    private boolean asBoolean(Object value) {
+        return ((Boolean)value).booleanValue();
+    }
+
+    private int asInt(Object value) {
+        return ((Integer)value).intValue();
+    }
+
+    public Object visitBinaryOperation(AstNode.BinaryOperation node) {
         switch (node.operator()) {
             case "+":
-                return node.lhs().accept(this) + node.rhs().accept(this);
+                Object lhs = node.lhs().accept(this);
+                Object rhs = node.rhs().accept(this);
+                if(lhs instanceof String || rhs instanceof String) {
+                    return lhs.toString() + rhs.toString();
+                } else {
+                    return asInt(lhs) + asInt(rhs);
+                }
             case "-":
-                return node.lhs().accept(this) - node.rhs().accept(this);
+                return asInt(node.lhs().accept(this)) - asInt(node.rhs().accept(this));
             case "*":
-                return node.lhs().accept(this) * node.rhs().accept(this);
+                return asInt(node.lhs().accept(this)) * asInt(node.rhs().accept(this));
             case "/":
-                return node.lhs().accept(this) / node.rhs().accept(this);
+                return asInt(node.lhs().accept(this)) / asInt(node.rhs().accept(this));
             case "<=":
-                return (node.lhs().accept(this) <= node.rhs().accept(this)) ? 1 : 0;
+                return asInt((node.lhs().accept(this))) <= asInt(node.rhs().accept(this)) ? 1 : 0;
             case ">=":
-                return (node.lhs().accept(this) >= node.rhs().accept(this)) ? 1 : 0;
+                return (asInt(node.lhs().accept(this)) >= asInt(node.rhs().accept(this))) ? 1 : 0;
             case "<":
-                return (node.lhs().accept(this) < node.rhs().accept(this)) ? 1 : 0;
+                return (asInt(node.lhs().accept(this)) < asInt(node.rhs().accept(this))) ? 1 : 0;
             case ">":
-                return (node.lhs().accept(this) > node.rhs().accept(this)) ? 1 : 0;
+                return (asInt(node.lhs().accept(this)) > asInt(node.rhs().accept(this))) ? 1 : 0;
             case "==":
                 return (node.lhs().accept(this).equals(node.rhs().accept(this))) ? 1 : 0;
             case "!=":
                 return (!(node.lhs().accept(this).equals(node.rhs().accept(this)))) ? 1 : 0;
             case "&&": {
-                Integer value1 = node.lhs().accept(this);
+                Integer value1 = asInt(node.lhs().accept(this));
                 return value1.equals(0) ? 0 : node.rhs().accept(this);
             }
             case "||": {
-                Integer value1 = node.lhs().accept(this);
+                Integer value1 = asInt(node.lhs().accept(this));
                 return (!value1.equals(0)) ? value1 : node.rhs().accept(this);
             }
             default:
@@ -86,8 +100,8 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     }
 
     @Override
-    public Integer visitLetExpression(AstNode.LetExpression node) {
-        Integer value = node.expression().accept(this);
+    public Object visitLetExpression(AstNode.LetExpression node) {
+        Object value = node.expression().accept(this);
         if(environment.contains(node.variableName())) {
             throw new NubRuntimeException("variable " + node.variableName() + " is already defined");
         }
@@ -96,8 +110,8 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     }
 
     @Override
-    public Integer visitAssignmentOperation(AstNode.AssignmentOperation node) {
-        Integer value = node.expression().accept(this);
+    public Object visitAssignmentOperation(AstNode.AssignmentOperation node) {
+        Object value = node.expression().accept(this);
         Optional<Environment> found = environment.findEnvironment(node.variableName());
         if(!found.isPresent()) {
             throw new NubRuntimeException("variable " + node.variableName() + " is not defined");
@@ -108,22 +122,22 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     }
 
     @Override
-    public Integer visitPrintExpression(AstNode.PrintExpression node) {
-        Integer value = node.target().accept(this);
+    public Object visitPrintExpression(AstNode.PrintExpression node) {
+        Object value = node.target().accept(this);
         System.out.print(value);
         return value;
     }
 
     @Override
-    public Integer visitPrintlnExpression(AstNode.PrintlnExpression node) {
-        Integer value = node.target().accept(this);
+    public Object visitPrintlnExpression(AstNode.PrintlnExpression node) {
+        Object value = node.target().accept(this);
         System.out.println(value);
         return value;
     }
 
     @Override
-    public Integer visitExpressionList(AstNode.ExpressionList node) {
-        Integer last = 0;
+    public Object visitExpressionList(AstNode.ExpressionList node) {
+        Object last = 0;
         for (AstNode.Expression e : node.expressions()) {
             last = e.accept(this);
         }
@@ -131,9 +145,9 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     }
 
     @Override
-    public Integer visitWhileExpression(AstNode.WhileExpression node) {
-        Integer last = 0;
-        while(node.condition().accept(this) != 0) {
+    public Object visitWhileExpression(AstNode.WhileExpression node) {
+        Object last = 0;
+        while(asInt(node.condition().accept(this)) != 0) {
             for(AstNode.Expression e:node.body()) {
                 last = e.accept(this);
             }
@@ -142,9 +156,9 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     }
 
     @Override
-    public Integer visitIfExpression(AstNode.IfExpression node) {
-        Integer condition = node.condition().accept(this);
-        Integer last = 0;
+    public Object visitIfExpression(AstNode.IfExpression node) {
+        Integer condition = asInt(node.condition().accept(this));
+        Object last = 0;
         if (condition != 0) {
             for (AstNode.Expression e : node.thenClause()) {
                 last = e.accept(this);
@@ -158,20 +172,20 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     }
 
     @Override
-    public Integer visitDefFunction(AstNode.DefFunction node) {
+    public Object visitDefFunction(AstNode.DefFunction node) {
         return null;
     }
 
     @Override
-    public Integer visitIdentifier(AstNode.Identifier node) {
-        Integer ret = environment.find(node.name());
+    public Object visitIdentifier(AstNode.Identifier node) {
+        Object ret = environment.find(node.name());
         if (ret == null)
             throw new NubRuntimeException(node.name() + " is not defined");
         else
             return ret;
     }
 
-    public Integer evaluate(AstNode.ExpressionList program) {
+    public Object evaluate(AstNode.ExpressionList program) {
         for(AstNode.Expression top:program.expressions()) {
             if(top instanceof AstNode.DefFunction) {
                 AstNode.DefFunction f = (AstNode.DefFunction)top;
@@ -182,7 +196,7 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     }
 
     @Override
-    public Integer visitFunctionCall(AstNode.FunctionCall node) {
+    public Object visitFunctionCall(AstNode.FunctionCall node) {
         AstNode.DefFunction function = functions.get(node.name().name());
         if(function == null) {
             throw new NubRuntimeException("function " + node.name().name() + " is not defined");
@@ -197,7 +211,7 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
             for (int i = 0; i < args.size(); i++) {
                 environment.register(args.get(i), node.params().get(i).accept(this));
             }
-            Integer last = 0;
+            Object last = null;
             try {
                 for (AstNode.Expression e : function.body()) {
                     last = e.accept(this);
@@ -211,8 +225,13 @@ public class Evaluator implements AstNode.ExpressionVisitor<Integer> {
     }
 
     @Override
-    public Integer visitReturn(AstNode.Return node) {
-        Integer value = node.expression().accept(this);
+    public Object visitReturn(AstNode.Return node) {
+        Object value = node.expression().accept(this);
         throw new ReturnException(value);
+    }
+
+    @Override
+    public Object visitStringLiteral(AstNode.StringLiteral node) {
+        return node.value();
     }
 }

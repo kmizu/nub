@@ -1,9 +1,6 @@
 package com.github.kmizu.nub;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Evaluator implements AstNode.ExpressionVisitor<Object> {
     public static class Environment {
@@ -207,9 +204,14 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
         }
         {
             Environment prevEnvironment = environment;
+            List<Object> values = new ArrayList<>();
+            //params must be evaluated before switching environment
+            for(AstNode.Expression e:node.params()) {
+                values.add(e.accept(this));
+            }
             environment = new Environment(globalEnvironment);
             for (int i = 0; i < args.size(); i++) {
-                environment.register(args.get(i), node.params().get(i).accept(this));
+                environment.register(args.get(i), values.get(i));
             }
             Object last = null;
             try {

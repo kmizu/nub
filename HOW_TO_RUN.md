@@ -16,7 +16,7 @@
 * 実行する
   * ツールバー[実行]→[実行]
   * 以下のような結果が得られる
-  
+
      ```
      "java" ...
      1
@@ -34,4 +34,12 @@
 
 # 端末を使う場合
 
-TODO
+mvnコマンド(Maven)が入っている状態で、
+
+```sh
+$ mvn compile # コンパイル
+$ mvn exec:java -Dexec.args=test-input/factorial.nub # 実行
+
+$ mvn package # fat jarの作成
+$ java -jar target/nub-0.1-SNAPSHOT.jar test-input/factorial.nub # 実行
+```

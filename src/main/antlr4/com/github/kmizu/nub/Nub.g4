@@ -197,3 +197,15 @@ NESTED_COMMENT : '/*' (NESTED_COMMENT | .)*? '*/' -> skip;
 
 WS  :   [ \t\n\r]+ -> skip ;
 
+STRING
+   : '"' (ESC | ~ ["\\])* '"'
+   ;
+fragment ESC
+   : '\\' (["\\/bfnrt] | UNICODE)
+   ;
+fragment UNICODE
+   : 'u' HEX HEX HEX HEX
+   ;
+fragment HEX
+   : [0-9a-fA-F]
+   ;

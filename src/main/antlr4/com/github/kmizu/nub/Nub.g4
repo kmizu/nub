@@ -19,6 +19,7 @@ toplevel returns [AstNode.Expression e]
    | printlnExpression {$e = $printlnExpression.e;}
    | ifExpression {$e = $ifExpression.e;}
    | whileExpression {$e = $whileExpression.e;}
+   | forExpression {$e = $forExpression.e;}
    | defFunction {$e = $defFunction.e;}
    | returnExpression {$e = $returnExpression.e;}
    ;
@@ -37,6 +38,12 @@ params returns [List<String> result]
 returnExpression returns [AstNode.Return e]
   : RETURN c=expression SEMICOLON {$e = new AstNode.Return($c.e);}
   ;
+
+forExpression returns [AstNode.ForExpression e]
+   : FOR LP i=IDENTIFIER IN init=expression TO term=expression RP b=block  {
+        $e = new AstNode.ForExpression($i.getText(), $init.e, $term.e, $b.e);
+   }
+   ;
 
 whileExpression returns [AstNode.WhileExpression e]
    : WHILE c=expression b=block {$e = new AstNode.WhileExpression($c.e, $b.e);}
@@ -113,6 +120,7 @@ primary returns [AstNode.Expression e]
     | '(' x=expression ')' {$e = $x.e;}
     | ifExpression {$e = $ifExpression.e;}
     | whileExpression {$e = $whileExpression.e;}
+    | forExpression {$e = $forExpression.e;}
     ;
 
 identifier returns [AstNode.Identifier e]
@@ -139,10 +147,16 @@ IN
     : 'in'
     ;
 
+TO  : 'to'
+    ;
+
 IF  : 'if'
     ;
 
 ELSE : 'else'
+    ;
+
+FOR : 'for'
     ;
 
 WHILE : 'while'

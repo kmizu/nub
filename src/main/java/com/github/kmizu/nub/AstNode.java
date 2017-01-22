@@ -16,6 +16,7 @@ public class AstNode {
         E visitExpressionList(ExpressionList node);
         E visitIfExpression(IfExpression node);
         E visitWhileExpression(WhileExpression node);
+        E visitForExpression(ForExpression node);
         E visitAssignmentOperation(AssignmentOperation node);
         E visitPrintlnExpression(PrintlnExpression node);
         E visitDefFunction(DefFunction node);
@@ -120,10 +121,11 @@ public class AstNode {
     public static class IfExpression extends Expression {
         private final AstNode.Expression condition;
         private final List<AstNode.Expression> thenClause, elseClause;
+
         public IfExpression(
-            AstNode.Expression condition,
-            List<AstNode.Expression> thenClause,
-            List<AstNode.Expression> elseClause) {
+                AstNode.Expression condition,
+                List<AstNode.Expression> thenClause,
+                List<AstNode.Expression> elseClause) {
             this.condition = condition;
             this.thenClause = thenClause;
             this.elseClause = elseClause;
@@ -166,6 +168,37 @@ public class AstNode {
         @Override
         public <E> E accept(ExpressionVisitor<E> visitor) {
             return visitor.visitWhileExpression(this);
+        }
+    }
+
+    public static class ForExpression extends Expression {
+        private final String i;
+        private final AstNode.Expression start;
+        private final AstNode.Expression end;
+
+        private final List<AstNode.Expression> body;
+        public ForExpression(
+                String i,
+                AstNode.Expression start,
+                AstNode.Expression end,
+                List<AstNode.Expression> body
+        ) {
+            this.i = i;
+            this.start = start;
+            this.end = end;
+            this.body = body;
+        }
+
+        public String i() { return i; }
+        public AstNode.Expression start() { return start; }
+        public AstNode.Expression end() { return end; }
+        public List<AstNode.Expression> body() {
+            return body;
+        }
+
+        @Override
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            return visitor.visitForExpression(this);
         }
     }
 

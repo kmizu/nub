@@ -158,6 +158,31 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
     }
 
     @Override
+    public Object visitForExpression(AstNode.ForExpression node) {
+        Object last = 0;
+        AstNode.Identifier i = new AstNode.Identifier(node.i());
+        int start = ((Integer)node.start().accept(this)).intValue();
+        int end = ((Integer)node.end().accept(this)).intValue();
+
+        environment.register(i.name(), start);
+        while (start != end) {
+            for (AstNode.Expression e: node.body()) {
+                last = e.accept(this);
+            }
+
+            start += 1;
+            environment.mapping.put(i.name(), start);
+        }
+        environment.mapping.remove(i.name());
+
+        for (AstNode.Expression e: node.body()) {
+            last = e.accept(this);
+        }
+
+        return last;
+    }
+
+    @Override
     public Object visitWhileExpression(AstNode.WhileExpression node) {
         Object last = 0;
         while(asInt(node.condition().accept(this)) != 0) {

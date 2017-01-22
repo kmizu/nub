@@ -52,4 +52,13 @@ public class NubTest {
         assertEquals((Boolean)(true), eval("true;"));
         assertEquals((Boolean)(false), eval("false;"));
     }
+
+    @Test
+    public void testFor() throws Exception {
+
+        assertEquals((int)(5), eval("let count = 0; for (i in 1 to 5) { count = count + 1; }; count;"));
+        assertEquals((int)(10), eval("let count = 0; for (i in 1 to 10) { count = count + 1; }; count;"));
+        assertEquals((int)(20), eval("let count = 0; for (i in 1 to 20) { count = count + 1; }; count;"));
+    }
+
 }

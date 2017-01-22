@@ -97,6 +97,7 @@ additive returns [AstNode.Expression e]
 multitive returns [AstNode.Expression e]
     : l=multitive op='*' r=primary {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | l=multitive op='/' r=primary {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=multitive op='%' r=primary {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | v=primary {$e = $v.e;}
     ;
 

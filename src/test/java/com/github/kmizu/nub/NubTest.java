@@ -25,4 +25,11 @@ public class NubTest {
         assertEquals((Integer)(-1), eval("1-1-1;"));
         assertEquals((Integer)(-2), eval("1-1-1-1;"));
     }
+
+    @Test
+    public void testRemainder() throws Exception {
+        assertEquals((Integer)0, eval("1%1;"));
+        assertEquals((Integer)(1), eval("5%2;"));
+        assertEquals((Integer)(2), eval("5%3;"));
+    }
 }

@@ -8,6 +8,7 @@ public class AstNode {
     public interface ExpressionVisitor<E> {
         E visitBinaryOperation(BinaryOperation node);
         E visitNumber(Number node);
+        E visitString(StringLiteral node);
         E visitLetExpression(LetExpression node);
         E visitIdentifier(Identifier node);
         E visitPrintExpression(PrintExpression node);
@@ -246,7 +247,7 @@ public class AstNode {
 
         @Override
         public <E> E accept(ExpressionVisitor<E> visitor) {
-            throw new NotImplementedException();
+            return visitor.visitString(this);
         }
     }
 

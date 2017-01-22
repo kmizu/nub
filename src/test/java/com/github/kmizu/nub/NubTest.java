@@ -32,4 +32,11 @@ public class NubTest {
         assertEquals((Integer)(1), eval("5%2;"));
         assertEquals((Integer)(2), eval("5%3;"));
     }
+
+    @Test
+    public void testString() throws Exception {
+        assertEquals((String)("1"), eval("\"1\";"));
+        assertEquals((String)("2"), eval("\"2\";"));
+        assertEquals((String)("3"), eval("\"3\";"));
+    }
 }

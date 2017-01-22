@@ -64,6 +64,10 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
                 return asInt(node.lhs().accept(this)) - asInt(node.rhs().accept(this));
             case "*":
                 return asInt(node.lhs().accept(this)) * asInt(node.rhs().accept(this));
+            case "**":
+                int lresult = asInt(node.lhs().accept(this));
+                int rresult = asInt(node.rhs().accept(this));
+                return (int)Math.pow(lresult, rresult);
             case "/":
                 return asInt(node.lhs().accept(this)) / asInt(node.rhs().accept(this));
             case "%":

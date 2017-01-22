@@ -19,6 +19,7 @@ toplevel returns [AstNode.Expression e]
    | printlnExpression {$e = $printlnExpression.e;}
    | ifExpression {$e = $ifExpression.e;}
    | whileExpression {$e = $whileExpression.e;}
+   | forExpression {$e = $forExpression.e;}
    | defFunction {$e = $defFunction.e;}
    | returnExpression {$e = $returnExpression.e;}
    ;
@@ -37,6 +38,12 @@ params returns [List<String> result]
 returnExpression returns [AstNode.Return e]
   : RETURN c=expression SEMICOLON {$e = new AstNode.Return($c.e);}
   ;
+
+forExpression returns [AstNode.ForExpression e]
+   : FOR LP i=IDENTIFIER IN init=expression TO term=expression RP b=block  {
+        $e = new AstNode.ForExpression($i.getText(), $init.e, $term.e, $b.e);
+   }
+   ;
 
 whileExpression returns [AstNode.WhileExpression e]
    : WHILE c=expression b=block {$e = new AstNode.WhileExpression($c.e, $b.e);}
@@ -96,7 +103,9 @@ additive returns [AstNode.Expression e]
 
 multitive returns [AstNode.Expression e]
     : l=multitive op='*' r=primary {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=multitive op='**' r=primary {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | l=multitive op='/' r=primary {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=multitive op='%' r=primary {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | v=primary {$e = $v.e;}
     ;
 
@@ -106,16 +115,17 @@ primary returns [AstNode.Expression e]
     }
     : v=identifier {$e = $v.e;} (LP ((p=expression {params.add($p.e);} (',' p=expression {params.add($p.e);})*)?) RP {$e = new AstNode.FunctionCall($v.e, params);})?
     | n=NUMBER {$e = new AstNode.Number(Integer.parseInt($n.getText()));}
+    | b=BOOL {$e = new AstNode.BooleanLiteral ($b.getText().equals("true"));}
     | s=STRING {$e = new AstNode.StringLiteral($s.getText());}
     | '(' x=expression ')' {$e = $x.e;}
     | ifExpression {$e = $ifExpression.e;}
     | whileExpression {$e = $whileExpression.e;}
+    | forExpression {$e = $forExpression.e;}
     ;
 
 identifier returns [AstNode.Identifier e]
     : i=IDENTIFIER {$e = new AstNode.Identifier($i.getText());}
     ;
-
 
 DEF
     : 'def'
@@ -137,16 +147,25 @@ IN
     : 'in'
     ;
 
+TO  : 'to'
+    ;
+
 IF  : 'if'
     ;
 
 ELSE : 'else'
     ;
 
+FOR : 'for'
+    ;
+
 WHILE : 'while'
    ;
 
 RETURN : 'return'
+   ;
+
+BOOL : 'true' | 'false'
    ;
 
 IDENTIFIER

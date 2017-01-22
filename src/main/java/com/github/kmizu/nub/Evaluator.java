@@ -64,8 +64,14 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
                 return asInt(node.lhs().accept(this)) - asInt(node.rhs().accept(this));
             case "*":
                 return asInt(node.lhs().accept(this)) * asInt(node.rhs().accept(this));
+            case "**":
+                int lresult = asInt(node.lhs().accept(this));
+                int rresult = asInt(node.rhs().accept(this));
+                return (int)Math.pow(lresult, rresult);
             case "/":
                 return asInt(node.lhs().accept(this)) / asInt(node.rhs().accept(this));
+            case "%":
+                return asInt(node.lhs().accept(this)) % asInt(node.rhs().accept(this));
             case "<=":
                 return asInt((node.lhs().accept(this))) <= asInt(node.rhs().accept(this)) ? 1 : 0;
             case ">=":
@@ -93,6 +99,16 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
 
     @Override
     public Integer visitNumber(AstNode.Number node) {
+        return node.value();
+    }
+
+    @Override
+    public String visitString(AstNode.StringLiteral node) {
+        return node.value();
+    }
+
+    @Override
+    public Boolean visitBoolean(AstNode.BooleanLiteral node) {
         return node.value();
     }
 
@@ -138,6 +154,31 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
         for (AstNode.Expression e : node.expressions()) {
             last = e.accept(this);
         }
+        return last;
+    }
+
+    @Override
+    public Object visitForExpression(AstNode.ForExpression node) {
+        Object last = 0;
+        AstNode.Identifier i = new AstNode.Identifier(node.i());
+        int start = ((Integer)node.start().accept(this)).intValue();
+        int end = ((Integer)node.end().accept(this)).intValue();
+
+        environment.register(i.name(), start);
+        while (start != end) {
+            for (AstNode.Expression e: node.body()) {
+                last = e.accept(this);
+            }
+
+            start += 1;
+            environment.mapping.put(i.name(), start);
+        }
+        environment.mapping.remove(i.name());
+
+        for (AstNode.Expression e: node.body()) {
+            last = e.accept(this);
+        }
+
         return last;
     }
 

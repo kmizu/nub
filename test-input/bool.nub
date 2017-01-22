@@ -1,0 +1,17 @@
+let flag = true;
+
+let flag2 = false;
+
+let flag3 = true;
+
+if (flag == flag2) {
+    println(true);
+} else {
+    println(false);
+}
+
+if (flag == flag3) {
+    println(true);
+} else {
+    println(false);
+}

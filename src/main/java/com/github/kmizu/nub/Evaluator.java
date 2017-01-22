@@ -108,6 +108,11 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
     }
 
     @Override
+    public Boolean visitBoolean(AstNode.BooleanLiteral node) {
+        return node.value();
+    }
+
+    @Override
     public Object visitLetExpression(AstNode.LetExpression node) {
         Object value = node.expression().accept(this);
         if(environment.contains(node.variableName())) {

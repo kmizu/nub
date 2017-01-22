@@ -8,6 +8,7 @@ public class AstNode {
     public interface ExpressionVisitor<E> {
         E visitBinaryOperation(BinaryOperation node);
         E visitNumber(Number node);
+        E visitBoolean(BooleanLiteral node);
         E visitString(StringLiteral node);
         E visitLetExpression(LetExpression node);
         E visitIdentifier(Identifier node);
@@ -248,6 +249,23 @@ public class AstNode {
         @Override
         public <E> E accept(ExpressionVisitor<E> visitor) {
             return visitor.visitString(this);
+        }
+    }
+
+    public static class BooleanLiteral extends Expression {
+        private final Boolean value;
+        public BooleanLiteral(Boolean value) { this.value = value; }
+        public Boolean value() {
+            if (value == true) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            return visitor.visitBoolean(this);
         }
     }
 

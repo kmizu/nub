@@ -46,4 +46,10 @@ public class NubTest {
         assertEquals((Integer)(8), eval("2**3;"));
         assertEquals((Integer)(16), eval("2**4;"));
     }
+
+    @Test
+    public void testBool() throws Exception {
+        assertEquals((Boolean)(true), eval("true;"));
+        assertEquals((Boolean)(false), eval("false;"));
+    }
 }

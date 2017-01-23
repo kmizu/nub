@@ -1,5 +1,7 @@
 # Nub: A Tiny Programming Language
 
+[![Build Status](https://travis-ci.org/kmizu/nub.png?branch=master)](https://travis-ci.org/kmizu/nub)
+
 このレポジトリは[プログラミング言語作成ハンズオン](https://connpass.com/event/41184/)向けのレポジトリです。
 Nubとは英語で**小さな塊や隆起**を意味する言葉です。
 Nubの文法は[ANTLR4](http://www.antlr.org/)を使って書かれています。

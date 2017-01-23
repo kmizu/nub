@@ -214,21 +214,11 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
                 environment.register(args.get(i), values.get(i));
             }
             Object last = null;
-            try {
-                for (AstNode.Expression e : function.body()) {
-                    last = e.accept(this);
-                }
-            }catch(ReturnException ex) {
-                last = ex.value();
+            for (AstNode.Expression e : function.body()) {
+               last = e.accept(this);
             }
             environment = prevEnvironment;
             return last;
         }
-    }
-
-    @Override
-    public Object visitReturn(AstNode.Return node) {
-        Object value = node.expression().accept(this);
-        throw new ReturnException(value);
     }
 }

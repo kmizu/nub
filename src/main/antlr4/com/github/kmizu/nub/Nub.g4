@@ -20,7 +20,6 @@ toplevel returns [AstNode.Expression e]
    | ifExpression {$e = $ifExpression.e;}
    | whileExpression {$e = $whileExpression.e;}
    | defFunction {$e = $defFunction.e;}
-   | returnExpression {$e = $returnExpression.e;}
    ;
 
 defFunction returns [AstNode.DefFunction e]
@@ -33,10 +32,6 @@ params returns [List<String> result]
    }
    : (n=IDENTIFIER {ps.add($n.getText());} (',' n=IDENTIFIER {ps.add($n.getText());})*)? { $result = ps; }
    ;
-
-returnExpression returns [AstNode.Return e]
-  : RETURN c=expression SEMICOLON {$e = new AstNode.Return($c.e);}
-  ;
 
 whileExpression returns [AstNode.WhileExpression e]
    : WHILE c=expression b=block {$e = new AstNode.WhileExpression($c.e, $b.e);}
